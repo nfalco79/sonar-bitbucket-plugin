@@ -153,7 +153,9 @@ object GitDiffParser extends RegexParsers {
 
   def ctxLine: Parser[CtxLine] = " " ~> """.*""".r <~ opt(nl) ^^ { l => CtxLine(l) }
 
-  def addedLine: Parser[AddedLine] = "+" ~> """.*""".r <~ opt(nl) ^^ { l => AddedLine(l) }
+  // Temporary fix gitDiffHeader within new line (read every line up to the following diff)
+  def addedLine: Parser[AddedLine] = "+" ~> readUpToNextDiffOrEnd ^^ { l => AddedLine(l) }
+  //def addedLine: Parser[AddedLine] = "+" ~> """.*""".r <~ opt(nl) ^^ { l => AddedLine(l) }
 
   def removedLine: Parser[RemovedLine] = "-" ~> """.*""".r <~ opt(nl) ^^ { l => RemovedLine(l) }
 
